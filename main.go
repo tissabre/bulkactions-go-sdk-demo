@@ -260,7 +260,7 @@ func createBulkActions(
 					OSProfile: &armcomputefleet.VirtualMachineScaleSetOSProfile{
 						ComputerNamePrefix: to.Ptr("sample-compute"),
 						AdminUsername:      to.Ptr("sample-user"),
-						AdminPassword:      to.Ptr("Password01!@#"),
+						AdminPassword:      to.Ptr("***********"), // use a valid password here
 					},
 					NetworkProfile: &armcomputefleet.VirtualMachineScaleSetNetworkProfile{
 						NetworkAPIVersion: to.Ptr(armcomputefleet.NetworkAPIVersionV20201101),
@@ -290,7 +290,14 @@ func createBulkActions(
 		},
 	}
 
-	fleetsClient.BeginCreateOrUpdate(ctx, resourceGroupName, bulkActionsName, parameters, nil)
+	poller, err := fleetsClient.BeginCreateOrUpdate(ctx, resourceGroupName, bulkActionsName, parameters, nil)
+	logIfError(err)
+
+	res, err := poller.PollUntilDone(ctx, nil)
+	logIfError(err)
+
+	// You could use response here. We use blank identifier for just demo purposes.
+	_ = res
 
 	log.Printf("Created BulkActions %s", bulkActionsName)
 }
