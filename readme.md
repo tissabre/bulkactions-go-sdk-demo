@@ -9,9 +9,8 @@ It demonstrates:
 
 ## Prerequisites
 
-- Azure subscription with access to `Microsoft.ComputeSchedule` RP  
 - [Go 1.21+](https://go.dev/dl/) installed locally  
-- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) (for login and resource setup)  
+- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) (for login)  
 
 ---
 
@@ -19,8 +18,8 @@ It demonstrates:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/<your-org>/<your-repo>.git
-   cd <your-repo>
+   git clone https://github.com/tissabre/bulkactions-go-sdk-demo.git
+   cd bulkactions-go-sdk-demo
    ```
 
 2. Authenticate with Azure CLI:
