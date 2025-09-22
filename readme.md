@@ -31,6 +31,3 @@ It demonstrates:
    ```bash
    go run main.go
    ```
-
-## Demo Recording
-[BulkActions Create Delete Demo - GO SDK.mp4](./recording.mp4)
