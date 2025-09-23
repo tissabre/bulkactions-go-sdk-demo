@@ -1,6 +1,6 @@
-# BulkActions + ScheduledActions Demo (Go SDK)
+# BulkActions + ScheduledActions Demo ([Go SDK](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/computefleet/armcomputefleet))
 
-This repository contains an end-to-end demo that shows how to create, scale, and delete VMs using the **Azure Go SDK**.  
+This repository contains an end-to-end demo that shows how to create, scale, and delete VMs using the **[Azure Go SDK](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/computefleet/armcomputefleet)**.  
 It demonstrates:  
 - **BulkActions API** for VM creation and scaling  
 - **ScheduledActions Bulk Delete API** for VM deletion  
