@@ -362,10 +362,14 @@ func bulkDeleteVMs(vmIDs []*string, forceDelete bool) {
 
 	// Start deletion
 	deleteResp, err := scheduledActionsClient.VirtualMachinesExecuteDelete(ctx, location, armcomputeschedule.ExecuteDeleteRequest{
-		ExecutionParameters: &armcomputeschedule.ExecutionParameters{},
-		Resources:           &armcomputeschedule.Resources{IDs: vmIDs},
-		Correlationid:       to.Ptr(uuid.New().String()),
-		ForceDeletion:       to.Ptr(forceDelete),
+		ExecutionParameters: &armcomputeschedule.ExecutionParameters{
+			RetryPolicy: &armcomputeschedule.RetryPolicy{
+				RetryWindowInMinutes: to.Ptr[int32](15),
+			},
+		},
+		Resources:     &armcomputeschedule.Resources{IDs: vmIDs},
+		Correlationid: to.Ptr(uuid.New().String()),
+		ForceDeletion: to.Ptr(forceDelete),
 	}, nil)
 	logIfError(err)
 
