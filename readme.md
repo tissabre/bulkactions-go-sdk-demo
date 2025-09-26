@@ -31,3 +31,7 @@ It demonstrates:
    ```bash
    go run main.go
    ```
+
+## More Examples
+
+Take a look at the [SDK source repo](https://github.com/Azure/azure-sdk-for-go/tree/sdk/resourcemanager/computefleet/armcomputefleet/v2.0.0-beta.1/sdk/resourcemanager/computefleet/armcomputefleet) for more [code samples](https://github.com/Azure/azure-sdk-for-go/blob/sdk/resourcemanager/computefleet/armcomputefleet/v2.0.0-beta.1/sdk/resourcemanager/computefleet/armcomputefleet/fleets_client_example_test.go)!
