@@ -105,17 +105,18 @@ func main() {
 	// This is required in order to delete VMs using the ScheduledActions BulkDelete feature
 	providerClient.Register(ctx, "Microsoft.ComputeSchedule", nil)
 
-	// Get the list of VMs in the first BulkActions
-	ba_1k_vms_list := listVMsInBulkAction("BA-1K-VMs")
+	// Get the list of *failed* VMs in the first BulkActions
+	operationStatus := armcomputefleet.VMOperationStatusFailed
+	ba_1k_vms_failed_list := listVMsInBulkAction("BA-1K-VMs", &operationStatus)
 
-	// Delete all VMs created by the first BulkActions using the ScheduledActions BulkDelete feature with forceDelete
+	// Delete *failed* VMs created by the first BulkActions using the ScheduledActions BulkDelete feature with forceDelete
 	bulkDeleteVMsInBatch(
-		ba_1k_vms_list,
+		ba_1k_vms_failed_list,
 		/*forceDelete*/ true,
 	)
 
-	// Get the list of VMs in the second BulkActions
-	ba_1k_vcpus_list := listVMsInBulkAction("BA-1K-VCPUs")
+	// Get the list of *all* VMs in the second BulkActions
+	ba_1k_vcpus_list := listVMsInBulkAction("BA-1K-VCPUs" /*operationStatus*/, nil)
 
 	// Delete half of the VMs created by the second BulkActions using the ScheduledActions BulkDelete feature with forceDelete
 	bulkDeleteVMsInBatch(
@@ -176,7 +177,11 @@ func createResourceGroup() {
 		Location: to.Ptr(location),
 	}
 
-	resourceGroupClient.CreateOrUpdate(ctx, resourceGroupName, parameters, nil)
+	res, err := resourceGroupClient.CreateOrUpdate(ctx, resourceGroupName, parameters, nil)
+	logIfError(err)
+
+	// You could use the response here. We use a blank identifier for demo purposes.
+	_ = res
 
 	log.Printf("Created resource group: %s", resourceGroupName)
 }
@@ -211,7 +216,11 @@ func createVirtualNetwork() {
 		},
 	}
 
-	virtualNetworksClient.BeginCreateOrUpdate(ctx, resourceGroupName, vnetName, parameters, nil)
+	res, err := virtualNetworksClient.BeginCreateOrUpdate(ctx, resourceGroupName, vnetName, parameters, nil)
+	logIfError(err)
+
+	// You could use the response here. We use a blank identifier for demo purposes.
+	_ = res
 
 	log.Printf("Created virtual network %s", vnetName)
 }
@@ -294,20 +303,30 @@ func createBulkActions(
 	logIfError(err)
 
 	res, err := poller.PollUntilDone(ctx, nil)
-	logIfError(err)
 
-	// You could use response here. We use blank identifier for just demo purposes.
+	// You could use the response here. We use a blank identifier for demo purposes.
 	_ = res
+
+	// You could use the polling error here. We use a blank identifier for demo purposes.
+	_ = err
 
 	log.Printf("Created BulkActions %s", bulkActionsName)
 }
 
-func listVMsInBulkAction(bulkActionsName string) []*string {
+func listVMsInBulkAction(bulkActionsName string, operationStatus *armcomputefleet.VMOperationStatus) []*string {
 	var allVMs []*string
+
+	var options *armcomputefleet.FleetsClientListVirtualMachinesOptions
+	if operationStatus != nil && *operationStatus != "" {
+		options = &armcomputefleet.FleetsClientListVirtualMachinesOptions{
+			Filter: to.Ptr("'operationStatus' eq '" + string(*operationStatus) + "'"),
+		}
+	}
+
 	pager := fleetsClient.NewListVirtualMachinesPager(
 		resourceGroupName,
 		bulkActionsName,
-		/*options*/ nil)
+		options)
 
 	for pager.More() {
 		page, err := pager.NextPage(ctx)
